@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Drawing of a home using SVG</title>
+</head>
+
+<body bgcolor="#f0f8ff">
+<center>
+<svg width="400" height="500"> <!--- open svg--->
+  <rect x="25"
+        y="300"
+        height="250"
+        width="350"
+        fill="bisque"
+  />                           <!--- Used rectangle for the walls/body of the house (coloured bisque)--->
+  <rect x="80"
+        y="350"
+        height="50"
+        width="50"
+        fill="aqua"
+  />                           <!--- Used rectangle for the window of the house (coloured light blue)--->
+  <rect x="250"
+        y="370"
+        height="190"
+        width="100"
+        fill="brown"
+  />                           <!--- Used rectangle for the window of the house (coloured brown)--->
+  <polygon points="0 300, 400 300, 200 150"
+           style="fill: chocolate"
+  />                           <!--- Used polygon for the roof of the house (coloured light brown/chocolate)--->
+  <path stroke="black" fill="gray" stroke-width=".1"
+        d="M 250,370
+              A 50 50
+              0
+              0
+              1
+              350 370
+               "
+  ></path>                     <!--- Used arc for the top of the door of the house (coloured gray)--->
+  <path stroke="black" fill="white"
+        d='M 25,60
+            a 20,20 1 0,0 0,40
+            h 50
+            a 20,20 1 0,0 0,-40
+            a 10,10 1 0,0 -15,-10
+            a 15,15 1 0,0 -35,10
+            z'
+  ></path>                      <!--- Used arc for the cloud above the house (coloured white)--->
+
+</svg>                          <!--- Close svg--->
+</center>
+<div style="background-color:#00cc00" ><center><h2>My home!</h2></center></div>  <!--- Green garden of my house--->
+<div style="background-color: #888888" ><center><h1>Road</h1></center></div>     <!--- The road in front of my house--->
+</body>
+</html>
+
