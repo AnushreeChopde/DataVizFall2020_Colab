@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Line Chart</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        path{
+            stroke-width: 4px;
+            fill:none;
+        }
+        path.EstimatedCost{
+            stroke: red;
+        }
+        path.RawMaterial{
+            stroke: purple;
+        }
+        path.Workmanship{
+            stroke: blue;
+        }
+        path.YearlyStorage{
+            stroke: green;
+        }
+        g.axis{
+            font-size: 12pt;
+            stroke-width: 1px;
+        }
+        path.domain{
+            stroke-width: 1px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Line Chart</h1>
+<svg width="100%" height="100%" viewBox="0 0 1000 800"
+     style="background-color: snow">
+</svg>
+<script>
+    // step 1 select the svg element
+    let svg = d3.select('svg');
+    let margins = {x:80, y:50};
+    // step 2 read the database
+    const myData = d3.csv("https://raw.githubusercontent.com/umassdgithub/Fall2020-Week-5-Wednesday/master/Exercise_Wed%205.1/data_sample.csv",d3.autoType)
+
+    lineColors = ['#5f9ea0',
+        '#ffb6c1',
+        '#6495ed',
+        '#ff7f50']
+    keys = ['EstimatedCost', 'RawMaterial', 'Workmanship','YearlyStorage']
+
+    myData.then(function(data) {
+        // step 3 get the data and svg element extent
+        // svg extent
+        let rng = svg.attr('viewBox').split(' ')
+        rng = d3.map(rng, function (d) {
+            return d
+        })
+        let xRng = [rng[0] + margins.x, rng[2] - margins.x];
+        let yRng = [rng[3] - margins.y, rng[1] + margins.y];
+        // data extent (domain)
+        let date_extent = d3.extent(data,
+            function (d) {
+                return d.date
+            })
+        // step 4 make the X and Y scale
+        let xScale = d3.scaleTime().domain(date_extent).range(xRng)
+        let yScale = d3.scaleLinear()
+                        .domain([0,
+                                d3.max(data, function(d) { return Math.max(d.EstimatedCost, d.RawMaterial, d.Workmanship, d.YearlyStorage);  })])
+                        .range(yRng);
+        // step 5 & 6 make the line generator.
+        let i;
+        for (i = 0; i < keys.length; i++) {
+            let line = d3.line()
+                .x(function (d) {
+                    return xScale(d.date);
+                })
+                .y(function (d) {
+                    return yScale(d[keys[i]]);
+                });
+
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", line)
+                .attr("fill", 'none')
+                .style("stroke", lineColors[i])
+                .style("stroke-width", "2px");
+        }
+
+    // step 7 add the axis
+    // the paths are very close to the margins, so let us add some margin first
+    // let us add the axis to each line in a separate group so we can move them
+    // to the margins using transform attr
+    // adding x axis:
+    let xAxis = svg.append('g').attr("transform","translate("+(0)+","+(yRng[0])+")")
+        .attr('class','axis')
+        .call(d3.axisBottom(xScale));// call the scale function to automatically add the axis
+    let yAxis = svg.append('g')
+        .attr('class','axis')
+        .attr("transform","translate("+(margins.x)+","+(0)+")")
+        .call(d3.axisLeft(yScale));
+
+})
+
+
+
+</script>
+
+</body>
+</html>
+
