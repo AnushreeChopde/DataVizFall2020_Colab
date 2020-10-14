@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Horizontal Bar chart</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!--- <script src="https://d3js.org/topojson.v2.min.js"></script> --->
+    <style>
+        svg{
+            width: 100%;
+            height: 100%;
+        }
+        #container
+        {
+            width: 88%;
+            margin: auto;
+            padding-top: 3%;
+        }
+        .yAxis
+        {
+            font-size: medium;
+        }
+        .xAxis
+        {
+            font-size: medium;
+        }
+    </style>
+</head>
+<body>
+<div id="caption">
+    Example DeckGL
+</div>
+
+
+<div id="container">
+    <svg viewBox="0 0 1000 600">
+    </svg>
+</div>
+<!--- <div id="container"></div> --->
+<script>
+    // Step 1 Select SVG element
+    let svg = d3.select('svg')
+    // Let us add margins
+    let margins = {left:50, right:20, top:20, bottom:50};
+    // Step 2 Read csv and read data types
+    d3.csv('data_sample.csv',function (d){
+        // Converting data types
+        return{date:d3.timeParse("%Y-%m")(d.date),
+        EstimatedCost:Number(d.EstimatedCost),
+        RawMaterial:Number(d.RawMaterial),
+        Workmanship:Number(d.Workmanship),
+        YearlyStorage:Number(d.YearlyStorage)
+        };
+    }).then(function (data){
+        // lets check the data
+        //console.log(data)
+        // Step 3 Use stack generator to stack the data
+        let stack = d3.stack().keys(["EstimatedCost","RawMaterial","Workmanship","YearlyStorage"])
+        let stackedSeries = stack(data)
+        // let us control the stacked data
+        //console.log(stackedSeries)
+        // Step 4 Get min max and get scaling function
+        let xMin_Max = {min:0, max:d3.max(stackedSeries,
+            function (d){return d3.max(d, function (d){
+                return d[1];
+            })})
+        }
+        // let us control xMin_Max
+        //console.log(xMin_Max)
+        // Scaling function
+        let yScale = d3.scaleTime().domain(d3.extent(data, function (d){return d.date})).range([(600-margins.bottom),(0+margins.top)])
+        let xScale = d3.scaleLinear().domain([xMin_Max.min,xMin_Max.max]).range([(0+margins.left),(1000-margins.right)])
+        // Step 5 Append the groups and the rect elements to svg
+        let colors = ["#6a2c70","#b83b5e","#f08a5d","#eeecda"]
+        let groups = svg.selectAll('g').data(stackedSeries).enter().append('g')
+                    .style('fill',function (d,i){return colors[i]});
+        //console.log(groups)
+        let rects = groups.selectAll('rect').data(function (d){return d}).enter().append('rect')
+                    .attr("x", function (d){return 0+margins.left})
+                    .attr("y", function (d,i){return yScale(data[i].date)})
+                    .attr("height",function (d){return 20})
+                    .attr("width",function (d){return 0})
+                    .transition()
+                    .delay(function (d,i){return i*100})
+                    .duration(2000)
+                    .attr("x", function (d){return xScale(d[0])})
+                    .attr("width",function (d){return xScale(d[1])-xScale(d[0])})
+
+        // Step 6 Add Margins
+        // Margins added in code after step 1
+        // Step 7 Add Axis
+        // Let us add a group to contain the y axis
+        let y_axis = svg.append("g")
+                    .attr("transform","translate("+margins.left+","+margins.top+")")
+                    .attr("class","yAxis")
+                    .call(d3.axisLeft(yScale));
+        // Let us add x axis
+        let x_axis = svg.append("g")
+            .attr("transform","translate(0,"+(600-margins.bottom+margins.top)+")")
+            .attr("class","xAxis")
+            .call(d3.axisBottom(xScale))
+        // Step 8 Apply colors
+        // Already added!
+
+    })
+
+</script>
+</body>
+</html>
