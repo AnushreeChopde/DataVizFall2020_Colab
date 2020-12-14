@@ -1,0 +1,38 @@
+.axisX{
+    font-size: 20pt;
+}
+.axisY{
+    font-size: 20pt;
+}
+.axis{
+    font-size: 20pt;
+}
+circle{
+    fill-opacity: .5;
+}
+.title{
+    font-size: 25pt;
+    font-family: sans-serif;
+    text-anchor: middle;
+    color: black;
+    'z-index': 1001;
+}
+.label{
+    font-size: 20pt;
+    font-family: sans-serif;
+    text-anchor: middle;
+    'z-index': 1001;
+}
+.bars{
+    fill-opacity: .5;
+}
+.legend{
+    text-anchor: middle;
+    font-size: 15pt;
+    font-family: sans-serif;
+}
+/*.selected{*/
+/*    stroke: black;*/
+/*    stroke-width: 3px;*/
+/*    fill-opacity: 1;*/
+/*}*/
